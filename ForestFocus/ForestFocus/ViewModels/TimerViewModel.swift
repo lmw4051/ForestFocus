@@ -64,7 +64,11 @@ final class TimerViewModel: ObservableObject {
     // MARK: - Public Methods
     
     func startSession() async {
-        guard currentSession == nil else { return }
+        // Ensure we don't interrupt an active session
+        guard sessionState != .active && sessionState != .paused else { return }
+        
+        // Reset state for new session
+        totalPausedDuration = 0
         
         // Request notification permission
         _ = try? await notificationService.requestAuthorization()
